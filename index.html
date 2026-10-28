@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OG COMPLEX</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:25px 16px;background:#f8f8fb;color:#151515;font-family:Arial,sans-serif}header{text-align:center;font-size:clamp(38px,10vw,76px);font-weight:900;letter-spacing:2px;margin:35px 0 42px}.panel{max-width:650px;margin:auto;background:white;border:1px solid #ddd;border-radius:26px;padding:24px 18px;box-shadow:0 12px 30px #00000012}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;font-size:20px}.count{font-size:14px;background:#eee;border-radius:20px;padding:9px 13px}.entry{background:#f4f4f4;border:1px solid #ddd;border-radius:18px;padding:15px;margin:12px 0;overflow-wrap:anywhere}.entry a{color:#222}.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}button{padding:10px 14px;border:1px solid #ccc;background:white;border-radius:12px;font-size:15px;cursor:pointer}button.primary{background:#171717;color:white;border-color:#171717}input{width:100%;padding:13px;border:1px solid #ccc;border-radius:10px;font-size:16px;margin:6px 0 12px}.form{border-top:1px solid #ddd;margin-top:22px;padding-top:18px}label{font-size:14px;color:#555}.empty{color:#777;text-align:center;padding:22px 0}
+</style>
+</head>
+<body>
+<header>OG COMPLEX</header>
+<main class="panel">
+<div class="top"><span>⌁ Panels</span><span class="count" id="count">0 links</span></div>
+<div id="list"></div>
+<div class="form">
+<h3>＋ नया लिंक जोड़ें</h3>
+<label>लिंक का नाम</label><input id="title" placeholder="जैसे मेरा पेज">
+<label>वेबसाइट का URL</label><input id="url" type="url" placeholder="https://example.com">
+<button class="primary" onclick="add()">＋ लिंक सेव करें</button>
+</div>
+</main>
+<script>
+const key='og-complex-links';
+function get(){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return []}}
+function render(){let a=get();document.getElementById('count').textContent=a.length+' links';let list=document.getElementById('list');list.replaceChildren();if(!a.length){let p=document.createElement('div');p.className='empty';p.textContent='अभी कोई लिंक नहीं है';list.append(p)}a.forEach((v,i)=>{let card=document.createElement('section');card.className='entry';let title=document.createElement('strong');title.textContent=v.title;let br=document.createElement('br');let link=document.createElement('a');link.href=v.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=v.url;let actions=document.createElement('div');actions.className='actions';let copy=document.createElement('button');copy.textContent='कॉपी';copy.onclick=()=>navigator.clipboard.writeText(v.url).then(()=>alert('लिंक कॉपी हो गया')).catch(()=>prompt('लिंक कॉपी करें',v.url));let share=document.createElement('button');share.textContent='शेयर';share.onclick=()=>navigator.share?navigator.share({title:v.title,url:v.url}).catch(()=>{}):prompt('लिंक शेयर करने के लिए कॉपी करें',v.url);let del=document.createElement('button');del.textContent='हटाएँ';del.onclick=()=>{if(confirm('यह लिंक हटाएँ?')){let b=get();b.splice(i,1);localStorage.setItem(key,JSON.stringify(b));render()}};actions.append(copy,share,del);card.append(title,br,link,actions);list.append(card)})}
+function add(){let t=document.getElementById('title').value.trim(),u=document.getElementById('url').value.trim();if(!t||!u){alert('नाम और URL दोनों भरें');return}try{let x=new URL(u);if(!['http:','https:'].includes(x.protocol))throw Error()}catch(e){alert('सही URL डालें, जैसे https://example.com');return}let a=get();a.push({title:t,url:u});try{localStorage.setItem(key,JSON.stringify(a))}catch(e){alert('ब्राउज़र में सेव नहीं हो पाया');return}document.getElementById('title').value='';document.getElementById('url').value='';render()}
+render();
+</script>
+</body>
+</html>
